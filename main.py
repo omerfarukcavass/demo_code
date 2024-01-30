@@ -1,45 +1,44 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
+from Bio import SeqIO
 
-def button_func():
-	print('a button was pressed')
+class FastaViewerApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("FASTA Viewer")
 
-def exercise_button_func():
-	print('hello')
+        # Create a treeview widget to display the sequences
+        self.tree = ttk.Treeview(self.master)
+        self.tree["columns"] = ("Sequence ID", "Sequence")
+        self.tree.heading("#0", text="Index")
+        self.tree.column("#0", width=50)
+        self.tree.heading("Sequence ID", text="Sequence ID")
+        self.tree.column("Sequence ID", anchor=tk.W, width=150)
+        self.tree.heading("Sequence", text="Sequence")
+        self.tree.column("Sequence", anchor=tk.W, width=400)
+        self.tree.pack(fill='both', expand=True)
 
-# create a window
-window = tk.Tk()
-window.title('Window and Widgets')
-window.geometry('800x500')
+        # Open a dialog to choose a FASTA file
+        fasta_file_path = filedialog.askopenfilename(
+            title="Select a file")
 
-# ttk label
-label = ttk.Label(master = window, text = 'This is a test')
-label.pack()
+        if fasta_file_path:
+            # Read the FASTA file and populate the treeview
+            self.load_fasta_file(fasta_file_path)
 
-# tk.text
-text = tk.Text(master = window)
-text.pack()
+    def load_fasta_file(self, file_path):
+        # Clear the treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
 
-# ttk entry
-entry = ttk.Entry(master = window)
-entry.pack()
+        # Read the FASTA file and populate the treeview
+        with open(file_path, "r") as fasta_file:
+            for index, record in enumerate(SeqIO.parse(fasta_file, "fasta"), start=1):
+                seq_id = record.id
+                sequence = str(record.seq)
+                self.tree.insert("", index, text=index, values=(seq_id, sequence))
 
-# exercise label
-exercise_label = ttk.Label(master = window, text = "my label")
-exercise_label.pack()
-
-# ttk button
-button = ttk.Button(master = window, text = 'A button', command = button_func)
-button.pack()
-
-# exercise
-# add one more text label and a button with a function that prints 'hello'
-# the label should say "my label" and be between the entry widget and the button
-
-# exercise button
-# exercise_button = ttk.Button(master = window, text = 'exercise button', command = exercise_button_func)
-exercise_button = ttk.Button(master = window, text = 'exercise button', command = lambda: print('hello'))
-exercise_button.pack()
-
-# run
-window.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = FastaViewerApp(root)
+    root.mainloop()
