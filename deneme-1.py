@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from Bio import SeqIO
+import time
 
 class FastaViewerApp:
     def __init__(self, master):
@@ -60,8 +61,11 @@ class FastaViewerApp:
         # Read the FASTA file and get the sequence
         with open(fasta_file_path, "r") as fasta_file:
             x, y = 10, 10
+            start_time = time.time()
+
+            count = 0
             for record in SeqIO.parse(fasta_file, "fasta"):
-                sequence = str(record.seq)
+                sequence = record.seq
 
                 # Display each letter of the sequence on the canvas
                 for letter in sequence:
@@ -72,6 +76,12 @@ class FastaViewerApp:
                     x += 20  # Adjust the spacing between letters
                 y += 20  # Adjust the vertical spacing between sequences
                 x = 10
+                count += 1
+
+        end_time = time.time()
+        runtime = end_time - start_time
+        print(f"Runtime: {runtime} seconds")
+        print(f"Count: {count}")
 
         # Update the scrollregion after adding text items
         self.canvas.update_idletasks()

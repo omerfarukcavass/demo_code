@@ -1,0 +1,12 @@
+1. For reading large files,
+   - first read file size, if small read all
+   - if not, find number of seqs and inform user,
+        - can be done with "indexing" files to a dict.
+        - ask how many seq to read or he select which ones using a listbox etc.
+        - if it selects too large number it may not fit to RAM
+            - check RAM as you read some large bulks, exit reading if necessary
+
+2. For printing large seqs
+   - print into canvas only the shown area not all seqs.
+   - scroll slowly and restart the scrollbar as it scrolls to end position
+   - if he wants to view an arbitray index take x,y positon and print that region

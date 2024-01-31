@@ -11,10 +11,10 @@ class FastaViewerApp:
         self.tree = ttk.Treeview(self.master)
         self.tree["columns"] = ("Sequence ID", "Sequence")
         self.tree.heading("#0", text="Index")
-        self.tree.column("#0", width=50)
         self.tree.heading("Sequence ID", text="Sequence ID")
-        self.tree.column("Sequence ID", anchor=tk.W, width=150)
         self.tree.heading("Sequence", text="Sequence")
+        self.tree.column("#0", width=50)
+        self.tree.column("Sequence ID", anchor=tk.W, width=150)
         self.tree.column("Sequence", anchor=tk.W, width=400)
         self.tree.pack(fill='both', expand=True)
 
@@ -28,8 +28,6 @@ class FastaViewerApp:
         scrollbar_table = ttk.Scrollbar(self.master, orient='vertical', command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar_table.set)
         scrollbar_table.place(relx=1, rely=0, relheight=1, anchor='ne')
-
-
 
         # Create a button to load the FASTA file
         self.load_button = tk.Button(self.master, text="Load File", command=self.load_fasta_file)
