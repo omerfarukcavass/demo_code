@@ -6,6 +6,18 @@ class FastaViewerApp:
     def __init__(self, master):
         self.master = master
         self.master.title("FASTA Viewer")
+        # Set the window size
+        width, height = 800, 600
+        self.master.geometry(f"{width}x{height}")
+
+        # Calculate the center coordinates
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
+        # Set the window position to the center
+        self.master.geometry(f"+{x}+{y}")
 
         # Color dictionary for each DNA base
         self.color_dict = {'A': 'lightblue', 'C': 'lightgreen', 'T': 'lightcoral', 'G': 'lightgoldenrodyellow'}
