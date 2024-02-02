@@ -6,7 +6,31 @@
         - if it selects too large number it may not fit to RAM
             - check RAM as you read some large bulks, exit reading if necessary
 
-2. For printing large seqs
-   - print into canvas only the shown area not all seqs.
-   - scroll slowly and restart the scrollbar as it scrolls to end position
-   - if he wants to view an arbitray index take x,y positon and print that region
+
+2. her letter için ayrı renk dene :
+
+"""
+import tkinter as tk
+
+def insert_colored_string(text_widget, string):
+    for i, char in enumerate(string):
+        tag_name = f"tag_{i}"  # Dynamic tag name
+        text_widget.tag_configure(tag_name, foreground=get_color_for_char(char))
+    text_widget.insert(tk.END, string, tuple(f"tag_{i}" for i in range(len(string))))
+
+def get_color_for_char(char):
+    # Define your logic for assigning colors based on characters
+    # Here, a simple example with alternating colors for illustration
+    return "red" if char.isalpha() and ord(char) % 2 == 0 else "blue"
+
+root = tk.Tk()
+
+text_widget = tk.Text(root)
+text_widget.pack()
+
+example_string = "HelloWorld123"
+
+insert_colored_string(text_widget, example_string)
+
+root.mainloop()
+"""
