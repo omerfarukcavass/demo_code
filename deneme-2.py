@@ -13,38 +13,38 @@ class FastaViewerApp:
         # Configure grid weights to make both columns expandable
         self.master.grid_rowconfigure(0, weight=1, uniform = 'a')
         self.master.grid_columnconfigure(0, weight=1, uniform = 'a')
-        self.master.grid_columnconfigure(1, weight=1, uniform = 'a')
+        self.master.grid_columnconfigure(1, weight=4, uniform = 'a')
 
         # Create the left frame
         left_frame = tk.Frame(self.master)
         left_frame.grid(row=0, column=0, sticky="nsew")
 
         # Create a Text widget for displaying sequence names
-        self.seq_names_text = tk.Text(left_frame, wrap=tk.NONE, font=("Courier", 20), spacing1=2, spacing2=2, spacing3=2,)
-        self.seq_names_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.seq_names_text_widget = tk.Text(left_frame, wrap=tk.NONE, font=("Courier", 20), spacing1=2, spacing2=2, spacing3=2)
+        self.seq_names_text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Create a vertical scrollbar for the sequence names Text widget
-        v_scrollbar_seq_names = tk.Scrollbar(left_frame, orient=tk.VERTICAL, command=self.seq_names_text.yview)
+        v_scrollbar_seq_names = tk.Scrollbar(left_frame, orient=tk.VERTICAL, command=self.seq_names_text_widget.yview)
         v_scrollbar_seq_names.pack(side=tk.RIGHT, fill=tk.Y)
-        self.seq_names_text.configure(yscrollcommand=v_scrollbar_seq_names.set)
+        self.seq_names_text_widget.configure(yscrollcommand=v_scrollbar_seq_names.set)
 
         # Create the right frame
         right_frame = tk.Frame(self.master)
         right_frame.grid(row=0, column=1, sticky="nsew")
 
         # Create a Text widget for displaying the sequence
-        self.text_widget = tk.Text(right_frame, wrap=tk.NONE, font=("Courier", 20), spacing1=2, spacing2=2, spacing3=2, state="normal")
-        self.text_widget.pack(fill=tk.BOTH, expand=True)
+        self.seq_text_widget = tk.Text(right_frame, wrap=tk.NONE, font=("Courier", 20), spacing1=2, spacing2=2, spacing3=2, state="normal")
+        self.seq_text_widget.pack(fill=tk.BOTH, expand=True)
 
         # Create a vertical scrollbar for the Text widget
-        v_scrollbar = tk.Scrollbar(right_frame, orient=tk.VERTICAL, command=self.text_widget.yview)
+        v_scrollbar = tk.Scrollbar(right_frame, orient=tk.VERTICAL, command=self.seq_text_widget.yview)
         v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.text_widget.configure(yscrollcommand=v_scrollbar.set)
+        self.seq_text_widget.configure(yscrollcommand=v_scrollbar.set)
 
         # Create a horizontal scrollbar for the Text widget
-        h_scrollbar = tk.Scrollbar(right_frame, orient=tk.HORIZONTAL, command=self.text_widget.xview)
+        h_scrollbar = tk.Scrollbar(right_frame, orient=tk.HORIZONTAL, command=self.seq_text_widget.xview)
         h_scrollbar.pack(fill=tk.X)
-        self.text_widget.configure(xscrollcommand=h_scrollbar.set)
+        self.seq_text_widget.configure(xscrollcommand=h_scrollbar.set)
 
         # Create menu bar
         self.menu_bar = tk.Menu(self.master)
@@ -56,9 +56,14 @@ class FastaViewerApp:
         self.sequence_menu.add_command(label="Load File", command=self.load_fasta_file)
 
         # Dictionary to store sequences by name
-        self.sequences = {}
+        self.seq_names = []
+        self.sequences = []
 
     def load_fasta_file(self):
+        # Removes all elements from the lists
+        self.seq_names.clear()
+        self.sequences.clear()
+
         # Open a dialog to choose a FASTA file
         fasta_file_path = filedialog.askopenfilename(title="Select a file")
 
@@ -73,31 +78,40 @@ class FastaViewerApp:
             self.display_all_sequences()
 
     def read_sequences(self, fasta_file_path):
+        #print("read_sequences")
+
         # Read the FASTA file and store sequences in the dictionary
         with open(fasta_file_path, "r") as fasta_file:
             for record in SeqIO.parse(fasta_file, "fasta"):
                 seq_name = record.id
                 sequence = str(record.seq)
-                self.sequences[seq_name] = sequence
+                self.seq_names.append(seq_name)
+                self.sequences.append(sequence)
 
     def display_sequence_names(self):
+        #print("display_sequence_names")
+
         # Clear the Listbox
-        self.seq_names_text.delete("1.0", tk.END)
+        self.seq_names_text_widget.configure(state="normal")
+        self.seq_names_text_widget.delete("1.0", tk.END)
 
         # Display the sequence names in the Listbox
-        for seq_name in self.sequences:
-            self.seq_names_text.insert(tk.END, seq_name.upper())
-            self.seq_names_text.insert(tk.END, "\n")
+        for seq_name in self.seq_names:
+            self.seq_names_text_widget.insert(tk.END, seq_name.upper())
+            self.seq_names_text_widget.insert(tk.END, "\n")
 
         # Update the scroll region after inserting text
-        self.seq_names_text.update_idletasks()
-        self.seq_names_text.configure(state="disabled")
+        self.seq_names_text_widget.update_idletasks()
+        self.seq_names_text_widget.configure(state="disabled")
 
     def display_all_sequences(self, colored = False):
+        #print("display_all_sequences")
+
         start_time = time.time()
 
         # Clear the Text widget
-        self.text_widget.delete("1.0", tk.END)
+        self.seq_text_widget.configure(state="normal")
+        self.seq_text_widget.delete("1.0", tk.END)
 
         #colors = ['red', 'blue', 'green', 'yellow']
         color_mapping = {
@@ -135,7 +149,7 @@ class FastaViewerApp:
             '-': 'grey',
         }
 
-        for seq_name, sequence in self.sequences.items():
+        for seq_name, sequence in zip(self.seq_names, self.sequences):
             # Assign unique tags to each sequence
             #fg_color = random.choice(colors)
             #bg_color = random.choice(colors)
@@ -144,28 +158,21 @@ class FastaViewerApp:
                 for letter in sequence:
                     # Insert the sequence into the Text widget with the configured tags
                     tag_name = f"{letter}"
-                    self.text_widget.tag_configure(tag_name, foreground="black", background=color_mapping[letter],
-                                              font=('Courier', 20))
-                    self.text_widget.insert(tk.END, letter, tag_name)
+                    self.seq_text_widget.tag_configure(tag_name, foreground="black", background=color_mapping[letter],
+                                                       font=('Courier', 20))
+                    self.seq_text_widget.insert(tk.END, letter, tag_name)
             else:
-                self.text_widget.insert(tk.END, sequence)
-            self.text_widget.insert(tk.END, "\n")
+                self.seq_text_widget.insert(tk.END, sequence)
+            self.seq_text_widget.insert(tk.END, "\n")
 
         # Update the scroll region after inserting text
-        self.text_widget.update_idletasks()
-        self.text_widget.configure(state="disabled")
+        self.seq_text_widget.update_idletasks()
+        self.seq_text_widget.configure(state="disabled")
 
         end_time = time.time()
         runtime = end_time - start_time
-        print(f"Runtime: {runtime} seconds")
+        print(f"Runtime: {runtime} seconds for {len(self.sequences)} seqs.")
 
-
-    def on_letter_click(self, event):
-        # Get the clicked position
-        index = self.text_widget.index(tk.CURRENT)
-        letter = self.text_widget.get(index)
-
-        print(f"Selected letter: {letter}")
 
 if __name__ == "__main__":
     root = tk.Tk()
