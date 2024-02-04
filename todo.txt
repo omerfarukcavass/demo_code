@@ -19,3 +19,57 @@
     - All features bakarak plan çıkar, kod dosya yapısı, UI yapısı
     - Sonra her component için min gerekli feature lar ekleyerek devam
 
+
+UI
+
+- The Intro Page:
+    - all info about app
+    - read an example file etc.
+    - not "Seq viwer", they are open from menu.
+
+- Sequence Editor:
+    - Seq viwer (ASIL)
+    - Sequence Input/Output
+        - Annotations window
+        - Parse seq window
+        - Sequence files as dictionaries window
+        - Converting between sequence file formats window
+    - Sequence Operations
+        - Windows for ops in selected seqs
+
+- Sequence Alignment
+    - Seq align viwer (ASIL) -- aynısı
+    - Alignment Input/Output
+        - Parsing Sequence Alignments window
+        - Converting file formats window
+    - Alignment Modify
+        - Windows for ops in selected seqs
+    -  Alignment Tools
+        - Windows for running tools
+        - Detailed windows for pairwise
+
+- Phylogenetic Tree
+    - Tree viewer (ASIL)
+    - Phylo Input/Output
+        - Parsing window
+        - Export the tree window
+        - Converting  window
+    - Infer tree from alignments
+        - Runs external apps window
+
+- Motif Analysis Component:
+    - Seq align viwer (ASIL) -- aynısı (runs in view mode)
+    - Motif IO
+        - Create motif window
+        - -Reading motifs window
+        - Writing motifs from scratch window
+        - Converting file formats window
+    - Search motifs in seqs, Search motifs using regex
+        - Result shown in align viewer + status bar
+
+
+
+
+
+
+

@@ -100,11 +100,13 @@ class FastaViewerApp:
     def display_sequence_names(self):
         #print("display_sequence_names")
 
-        # Clear the Listbox
+        # Clear the text widget
         self.seq_names_text_widget.configure(state="normal")
         self.seq_names_text_widget.delete("1.0", tk.END)
 
         # Display the sequence names in the Listbox
+        self.seq_names_text_widget.insert(tk.END, "\n") # for index line
+
         for seq_name in self.seq_names:
             self.seq_names_text_widget.insert(tk.END, seq_name.upper())
             self.seq_names_text_widget.insert(tk.END, "\n")
@@ -122,7 +124,11 @@ class FastaViewerApp:
         self.seq_text_widget.configure(state="normal")
         self.seq_text_widget.delete("1.0", tk.END)
 
-        #colors = ['red', 'blue', 'green', 'yellow']
+        # Display the sequence indices line at the top
+        max_seq_length = max(len(seq) for seq in self.sequences)
+        seq_indices_line = ''.join(str(i) if i % 10 == 0 and i != 0 else '.' for i in range(max_seq_length))
+        self.seq_text_widget.insert(tk.END, seq_indices_line + "\n")
+
         color_mapping = {
             # DNA
             'A': 'green',
