@@ -24,9 +24,14 @@ class FastaViewerApp:
         self.seq_names_text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Create a vertical scrollbar for the sequence names Text widget
-        v_scrollbar_seq_names = tk.Scrollbar(left_frame, orient=tk.VERTICAL, command=self.seq_names_text_widget.yview)
-        v_scrollbar_seq_names.pack(side=tk.RIGHT, fill=tk.Y)
+        v_scrollbar_seq_names = tk.Scrollbar(left_frame, orient=tk.VERTICAL, command=self.yview_text)
+        v_scrollbar_seq_names.place(relx=1, rely=0, relheight=1, anchor='ne')
         self.seq_names_text_widget.configure(yscrollcommand=v_scrollbar_seq_names.set)
+
+        # Create a horizontal scrollbar for the Text widget
+        h_scrollbar_seq_names = tk.Scrollbar(left_frame, orient=tk.HORIZONTAL, command=self.seq_names_text_widget.xview)
+        h_scrollbar_seq_names.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        self.seq_names_text_widget.configure(xscrollcommand=h_scrollbar_seq_names.set)
 
         # Create the right frame
         right_frame = tk.Frame(self.master)
@@ -37,13 +42,13 @@ class FastaViewerApp:
         self.seq_text_widget.pack(fill=tk.BOTH, expand=True)
 
         # Create a vertical scrollbar for the Text widget
-        v_scrollbar = tk.Scrollbar(right_frame, orient=tk.VERTICAL, command=self.seq_text_widget.yview)
-        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        v_scrollbar = tk.Scrollbar(right_frame, orient=tk.VERTICAL, command=self.yview_text)
+        v_scrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
         self.seq_text_widget.configure(yscrollcommand=v_scrollbar.set)
 
         # Create a horizontal scrollbar for the Text widget
         h_scrollbar = tk.Scrollbar(right_frame, orient=tk.HORIZONTAL, command=self.seq_text_widget.xview)
-        h_scrollbar.pack(fill=tk.X)
+        h_scrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
         self.seq_text_widget.configure(xscrollcommand=h_scrollbar.set)
 
         # Create menu bar
@@ -58,6 +63,10 @@ class FastaViewerApp:
         # Dictionary to store sequences by name
         self.seq_names = []
         self.sequences = []
+
+    def yview_text(self, *args):
+        self.seq_names_text_widget.yview(*args)  # Update the sequence names Text widget
+        self.seq_text_widget.yview(*args)  # Update the sequence Text widget
 
     def load_fasta_file(self):
         # Removes all elements from the lists
