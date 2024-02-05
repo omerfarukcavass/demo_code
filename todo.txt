@@ -28,9 +28,9 @@ UI
     - not "Seq viwer", they are open from menu.
 
 - Sequence Editor:
-    - Seq viwer (ASIL)
+    - Seq viewer (ASIL) ***
     - Sequence Input/Output
-        - Annotations window
+        - Annotations window **
         - Parse seq window
         - Sequence files as dictionaries window
         - Converting between sequence file formats window
@@ -46,7 +46,7 @@ UI
         - Windows for ops in selected seqs
     -  Alignment Tools
         - Windows for running tools
-        - Detailed windows for pairwise
+        - Detailed windows for pairwise **
 
 - Phylogenetic Tree
     - Tree viewer (ASIL)
@@ -61,11 +61,11 @@ UI
     - Seq align viwer (ASIL) -- aynısı (runs in view mode)
     - Motif IO
         - Create motif window
-        - -Reading motifs window
+        - Reading motifs window
         - Writing motifs from scratch window
         - Converting file formats window
     - Search motifs in seqs, Search motifs using regex
-        - Result shown in align viewer + status bar
+        - Result shown in align viewer + status bar(navigate each found instance)
 
 
 
