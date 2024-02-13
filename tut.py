@@ -1,64 +1,82 @@
 import tkinter as tk
 from tkinter import ttk
-from random import randint, choice
 
-# setup
-window = tk.Tk()
-window.geometry('600x400')
-window.title('Scrolling')
+# this is for letter annot viewer
 
-# canvas
-# canvas = tk.Canvas(window, bg = 'white', scrollregion = (0,0,2000,5000))
-# canvas.create_line(0,0,2000,5000, fill = 'green', width = 10)
-# for i in range(100):
-# 	l = randint(0,2000)
-# 	t = randint(0,5000)
-# 	r = l + randint(10,500)
-# 	b = t + randint(10,500)
-# 	color = choice(('red', 'green', 'blue', 'yellow', 'orange'))
-# 	canvas.create_rectangle(l,t,r,b, fill = color)
-# canvas.pack(expand = True, fill = 'both')
+def on_double_click(event):
+    item = tree.selection()[0]
+    print("Double clicked on item:", item)
 
-# # mousewheel scrolling
-# canvas.bind('<MouseWheel>', lambda event: canvas.yview_scroll(-int(event.delta / 60), "units"))
+def get_all_items():
+    print("============== get_all_items ==============")
+    all_items = tree.get_children()
+    for item_id in all_items:
+        item_values = tree.item(item_id, 'values')
+        print(f"Item {item_id}: {item_values}")
 
-# # scrollbar
-# scrollbar = ttk.Scrollbar(window, orient = 'vertical', command = canvas.yview)
-# canvas.configure(yscrollcommand = scrollbar.set)
-# scrollbar.place(relx = 1, rely = 0, relheight = 1, anchor = 'ne')
+def add_column():
+    new_column_name = entry.get()
+    tree["columns"] = tree["columns"] + (new_column_name,)
 
-# # exercise:
-# # create a horizontal scrollbar at the bottom and use it to scroll the canvas left and right
-# scrollbar_bottom = ttk.Scrollbar(window, orient = 'horizontal', command = canvas.xview)
-# canvas.configure(xscrollcommand = scrollbar_bottom.set)
-# scrollbar_bottom.place(relx = 0, rely = 1, relwidth = 1, anchor = 'sw')
+    # Set heading for all columns
+    for column in tree["columns"]:
+        tree.heading(column, text=column)
 
-# # also add an event to scroll left / right on Ctrl + mousewheel
-# canvas.bind('<Control MouseWheel>', lambda event: canvas.xview_scroll(-int(event.delta / 60), "units"))
+    # Set default values for the new column for all existing items
+    for item_id in tree.get_children():
+        tree.set(item_id, new_column_name, "")
 
-# text
-# text = tk.Text(window)
-# for i in range(1, 200):
-# 	text.insert(f'{i}.0', f'text: {i} \n')
-# text.pack(expand = True, fill = 'both')
+    get_all_items()
 
-# scrollbar_text = ttk.Scrollbar(window, orient = 'vertical', command = text.yview)
-# text.configure(yscrollcommand = scrollbar_text.set)
-# scrollbar_text.place(relx = 1, rely = 0, relheight = 1, anchor = 'ne')
+def delete_column():
+    #last_col = tree["columns"][-1] # bunu user seçecek
+    last_col = "Name" # bunu user seçecek
 
-# treeview
-table = ttk.Treeview(window, columns = (1,2), show = 'headings')
-table.heading(1, text = 'First name')
-table.heading(2, text = 'Last name')
-first_names = ['Bob', 'Maria', 'Alex', 'James', 'Susan', 'Henry', 'Lisa', 'Anna', 'Lisa']
-last_names = ['Smith', 'Brown', 'Wilson', 'Thomson', 'Cook', 'Taylor', 'Walker', 'Clark']
-for i in range(100):
-	table.insert(parent = '', index = tk.END, values = (choice(first_names), choice(last_names)))
-table.pack(expand = True, fill = 'both')
+    column_index = tree['columns'].index(last_col)
+    new_colns = tuple(item for item in tree["columns"] if item!= last_col)
+    tree["columns"] = new_colns
 
-scrollbar_table = ttk.Scrollbar(window, orient = 'vertical', command = table.yview)
-table.configure(yscrollcommand = scrollbar_table.set)
-scrollbar_table.place(relx = 1, rely = 0, relheight = 1, anchor = 'ne')
+    # Set heading for all columns
+    for column in tree["columns"]:
+        tree.heading(column, text=column)
 
-# run window
-window.mainloop()
+
+    # Set default values for the new column for all existing items
+    for item_id in tree.get_children():
+        current_values = tree.item(item_id, 'values')
+        updated_values = current_values[:column_index] + current_values[column_index + 1:]
+        tree.item(item_id, values= updated_values)
+
+    get_all_items()
+
+
+root = tk.Tk()
+
+tree = ttk.Treeview(root, show = 'headings',  columns= ("Name", "Age"))
+
+tree.heading("Name", text="Name")
+tree.heading("Age", text="Age")
+
+# Insert some sample data
+for i in range(1, 60):
+    tree.insert("", "end", values=("Person {}".format(i), 25 + i))
+
+# Bind the double-click event
+tree.bind("<<TreeviewOpen>>", on_double_click)
+
+tree.pack(expand=True, fill="both")
+
+# Entry for adding new column
+entry = tk.Entry(root)
+entry.pack(pady=10)
+
+# Button to add new column
+add_button = tk.Button(root, text="Add Column", command=add_column)
+add_button.pack()
+
+# Button to delete last column
+add_button = tk.Button(root, text="Delete Column", command=delete_column)
+add_button.pack()
+
+
+root.mainloop()
